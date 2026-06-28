@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IMAGEIQ – AI-Powered Image Compression System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+  <!-- Loading Overlay -->
+  <div class="loading-overlay" id="loading">
+    <div class="loading-spinner"></div>
+    <p class="loading-text">Clustering pixels<span class="loading-dots"><span>.</span><span>.</span><span>.</span></span></p>
+    <p class="loading-sub">Running K-Means algorithm — please wait</p>
+  </div>
+
+  <!-- Header -->
+  <header class="site-header" style="max-width:900px;margin-left:auto;margin-right:auto;padding-left:1.25rem;padding-right:1.25rem;">
+    <div class="brand">
+      <div class="brand-mark">II</div>
+      <span class="brand-name">IMAGE<span>IQ</span></span>
+    </div>
+    <span class="nav-badge">K-Means Compression</span>
+  </header>
+
+  <!-- Page Content -->
+  <div class="page-wrapper">
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <div class="flash-container fade-up">
+          {% for message in messages %}
+            <div class="flash-msg">
+              <span class="flash-icon">
+                <svg width="16" height="16" fill="none" viewBox="0 0 24 24">
+                  <circle cx="12" cy="12" r="10" stroke="#EC4899" stroke-width="1.5"/>
+                  <path d="M12 8v4m0 4h.01" stroke="#EC4899" stroke-width="1.5" stroke-linecap="round"/>
+                </svg>
+              </span>
+              {{ message }}
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <!-- Hero -->
+    <section class="hero fade-up fade-up-1">
+      <div class="hero-label">K-Means Color Clustering</div>
+      <h1>
+        Compress Your Image<br>
+        <span class="grad-text">With Precision</span>
+      </h1>
+      <p>Upload any image and select how many colors to retain. Our algorithm clusters pixel data to deliver smaller, sharper results.</p>
+    </section>
+
+    <!-- Upload Card -->
+    <div class="upload-card fade-up fade-up-2">
+      <form action="/process" method="post" enctype="multipart/form-data"
+            onsubmit="document.getElementById('loading').classList.add('visible'); this.querySelector('.btn-process').disabled=true;">
+
+        <!-- Drop Zone -->
+        <div class="drop-zone" id="dropZone">
+          <input type="file" name="image" id="image" accept="image/*" required
+                 onchange="handleFileSelect(this)">
+          <div class="drop-icon">
+            <svg width="24" height="24" fill="none" viewBox="0 0 24 24">
+              <path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1M12 12V4m0 0L9 7m3-3l3 3" stroke="url(#g1)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <defs>
+                <linearGradient id="g1" x1="4" y1="4" x2="20" y2="20" gradientUnits="userSpaceOnUse">
+                  <stop stop-color="#EC4899"/>
+                  <stop offset="0.5" stop-color="#8B5CF6"/>
+                  <stop offset="1" stop-color="#06B6D4"/>
+                </linearGradient>
+              </defs>
+            </svg>
+          </div>
+          <p class="drop-title">Drop your image here</p>
+          <p class="drop-sub">PNG · JPG · JPEG · WEBP · GIF</p>
+          <p class="file-name-display" id="fileName"></p>
+        </div>
+
+        <!-- K Slider -->
+        <div class="slider-section">
+          <div class="slider-header">
+            <span class="slider-label">Color Clusters (K Value)</span>
+            <span class="k-badge" id="k-value">30</span>
+          </div>
+
+          <input type="range" name="k" id="k" min="1" max="50" value="30"
+                 oninput="updateSlider(this)">
+
+          <div class="k-info">
+            <span>1 — minimum</span>
+            <span>50 — maximum</span>
+          </div>
+
+          <!-- Color dot preview -->
+          <div class="k-visual" id="kVisual"></div>
+        </div>
+
+        <!-- Submit -->
+        <button type="submit" class="btn-process">
+          Process Image
+          <svg style="display:inline;margin-left:8px;vertical-align:middle;" width="16" height="16" fill="none" viewBox="0 0 24 24">
+            <path d="M5 12h14M13 6l6 6-6 6" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </form>
+    </div>
+
+  </div><!-- /.page-wrapper -->
+
+  <!-- ─── FOOTER ─────────────────────────────────────────── -->
+  <footer>
+    <div class="footer-grid">
+
+      <!-- Column 1: Brand -->
+      <div class="footer-brand">
+        <div class="brand" style="margin-bottom:0.9rem;">
+          <div class="brand-mark">II</div>
+          <span class="brand-name">IMAGE<span>IQ</span></span>
+        </div>
+        <p class="footer-desc">
+          Intelligent image compression powered by K-Means clustering.
+          Reduce file sizes while preserving visual quality — no data stored, no registration required.
+        </p>
+
+        <!-- Built By Card -->
+        <div class="built-by-card">
+          <div class="avatar-wrap">
+            <img src="https://unavatar.io/twitter/Baron_dikachi"
+                 alt="Dikachi Baron"
+                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+            <span class="avatar-fallback" style="display:none;">DB</span>
+          </div>
+          <div class="built-by-info">
+            <span class="built-by-label">Built by</span>
+            <span class="built-by-name">Dikachi Baron</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Column 2: Quick Links -->
+      <div>
+        <p class="footer-col-title">Quick Links</p>
+        <ul class="footer-links">
+          <li><a href="/">Upload Image</a></li>
+          <li><a href="/#how-it-works">How It Works</a></li>
+          <li><a href="/#k-value-guide">K-Value Guide</a></li>
+          <li><a href="/#about">About</a></li>
+        </ul>
+      </div>
+
+      <!-- Column 3: Connect -->
+      <div>
+        <p class="footer-col-title">Connect</p>
+        <ul class="connect-links">
+          <li><a href="https://x.com/Baron_dikachi" target="_blank" rel="noopener noreferrer">X / Twitter</a></li>
+          <li><a href="https://www.linkedin.com/in/dikachi-baron-a4a380356?utm_source=share_via&utm_content=profile&utm_medium=member_android" target="_blank" rel="noopener noreferrer">LinkedIn</a></li>
+          <li><a href="https://www.facebook.com/share/18H6wLY1fW/" target="_blank" rel="noopener noreferrer">Facebook</a></li>
+          <li><a href="https://github.com/Dikachi32" target="_blank" rel="noopener noreferrer">GitHub</a></li>
+        </ul>
+
+        <div class="social-row">
+          <span class="social-label">Follow</span>
+          <div class="social-icons">
+
+            <!-- Twitter/X -->
+            <a href="https://x.com/Baron_dikachi" target="_blank" rel="noopener noreferrer"
+               class="social-btn twitter" title="X / Twitter">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.748l7.73-8.835L1.254 2.25H8.08l4.262 5.633L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+              </svg>
+            </a>
+
+            <!-- LinkedIn -->
+            <a href="https://www.linkedin.com/in/dikachi-baron-a4a380356?utm_source=share_via&utm_content=profile&utm_medium=member_android"
+               target="_blank" rel="noopener noreferrer"
+               class="social-btn linkedin" title="LinkedIn">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z"/>
+                <circle cx="4" cy="4" r="2"/>
+              </svg>
+            </a>
+
+            <!-- Facebook -->
+            <a href="https://www.facebook.com/share/18H6wLY1fW/"
+               target="_blank" rel="noopener noreferrer"
+               class="social-btn facebook" title="Facebook">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/>
+              </svg>
+            </a>
+
+            <!-- GitHub -->
+            <a href="https://github.com/Dikachi32"
+               target="_blank" rel="noopener noreferrer"
+               class="social-btn github" title="GitHub">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/>
+              </svg>
+            </a>
+
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /.footer-grid -->
+
+    <!-- Bottom Bar -->
+    <div class="footer-bottom">
+      <span class="footer-copy">© 2026 PixelCluster · Dikachi Baron · All rights reserved.</span>
+      <div class="status-chips">
+        <span class="chip"><span class="chip-dot"></span>Cluster Active</span>
+        <span class="chip">K-Means v1.0</span>
+        <span class="chip">Flask</span>
+      </div>
+    </div>
+
+  </footer>
+
+  <script>
+    // File select handler
+    function handleFileSelect(input) {
+      const display = document.getElementById('fileName');
+      if (input.files && input.files[0]) {
+        display.textContent = '✓ ' + input.files[0].name;
+        display.classList.add('visible');
+        document.getElementById('dropZone').style.borderColor = 'var(--cyan)';
+      }
+    }
+
+    // Drag and drop visual
+    const dz = document.getElementById('dropZone');
+    dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('drag-over'); });
+    dz.addEventListener('dragleave', () => dz.classList.remove('drag-over'));
+    dz.addEventListener('drop', e => {
+      dz.classList.remove('drag-over');
+      const file = e.dataTransfer.files[0];
+      if (file) {
+        document.getElementById('image').files = e.dataTransfer.files;
+        handleFileSelect(document.getElementById('image'));
+      }
+    });
+
+    // Slider update with dynamic fill and dot preview
+    const COLORS = [
+      '#EC4899','#8B5CF6','#06B6D4','#F59E0B','#10B981',
+      '#EF4444','#3B82F6','#84CC16','#F97316','#6366F1',
+      '#14B8A6','#E879F9','#FBBF24','#34D399','#60A5FA',
+      '#FB923C','#A78BFA','#4ADE80','#38BDF8','#F472B6',
+      '#FACC15','#2DD4BF','#818CF8','#FCA5A5','#86EFAC',
+      '#7DD3FC','#FCD34D','#6EE7B7','#C4B5FD','#FDA4AF'
+    ];
+
+    function updateSlider(input) {
+      const val = parseInt(input.value);
+      document.getElementById('k-value').textContent = val;
+      // Update gradient fill
+      const pct = ((val - 1) / 49 * 100).toFixed(1) + '%';
+      input.style.background = `linear-gradient(to right, var(--purple) 0%, var(--purple) ${pct}, rgba(255,255,255,0.1) ${pct}, rgba(255,255,255,0.1) 100%)`;
+      // Update dot preview
+      const visual = document.getElementById('kVisual');
+      visual.innerHTML = '';
+      for (let i = 0; i < val && i < 30; i++) {
+        const dot = document.createElement('div');
+        dot.className = 'k-dot';
+        dot.style.background = COLORS[i % COLORS.length];
+        dot.style.opacity = i < val ? '1' : '0.15';
+        visual.appendChild(dot);
+      }
+      if (val > 30) {
+        const more = document.createElement('span');
+        more.style.fontFamily = 'JetBrains Mono, monospace';
+        more.style.fontSize = '0.6rem';
+        more.style.color = 'var(--text-muted)';
+        more.textContent = '+' + (val - 30);
+        visual.appendChild(more);
+      }
+    }
+
+    // Init on load
+    updateSlider(document.getElementById('k'));
+  </script>
+
+</body>
+</html>

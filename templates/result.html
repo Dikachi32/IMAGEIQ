@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Result — IMAGEIQ</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="site-header" style="max-width:900px;margin-left:auto;margin-right:auto;padding-left:1.25rem;padding-right:1.25rem;">
+    <div class="brand">
+      <div class="brand-mark">II</div>
+      <span class="brand-name">IMAGE<span>IQ</span></span>
+    </div>
+    <span class="nav-badge">K-Means Compression</span>
+  </header>
+
+  <!-- Page Content -->
+  <div class="page-wrapper">
+
+    <!-- Result Hero -->
+    <section class="result-hero fade-up fade-up-1">
+      <h1>Your Image is <span class="grad-text">Ready</span></h1>
+      <div class="result-meta">
+        <svg width="12" height="12" fill="none" viewBox="0 0 24 24">
+          <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"
+                stroke="#06B6D4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Compressed with &nbsp;<strong>K = {{ k }}</strong>&nbsp; color clusters
+      </div>
+    </section>
+
+    <!-- Image Meta Stats -->
+    <div class="meta-grid fade-up fade-up-2">
+      <div class="meta-card">
+        <span class="meta-label">File Name</span>
+        <span class="meta-value filename" title="{{ filename }}">{{ filename }}</span>
+      </div>
+      <div class="meta-card">
+        <span class="meta-label">Dimensions</span>
+        <span class="meta-value">{{ width }} × {{ height }} px</span>
+      </div>
+      <div class="meta-card">
+        <span class="meta-label">Original Size</span>
+        <span class="meta-value">{{ original_size }}</span>
+      </div>
+      <div class="meta-card">
+        <span class="meta-label">Compressed Size</span>
+        <span class="meta-value">{{ compressed_size }}</span>
+      </div>
+      <div class="meta-card highlight">
+        <span class="meta-label">Space Saved</span>
+        <span class="meta-value savings">{{ savings }} ({{ ratio }}%)</span>
+      </div>
+    </div>
+
+    <!-- Image Comparison Grid -->
+    <div class="compare-grid fade-up fade-up-3">
+
+      <!-- Original -->
+      <div class="compare-card original">
+        <div class="card-label-bar">
+          <span class="card-dot original"></span>
+          <span class="card-label-title">Original</span>
+          <span class="card-label-badge">Source</span>
+        </div>
+        <img src="{{ original_image }}" alt="Original Image">
+        <div class="size-bar original-bar">
+          <span class="size-tag">{{ original_size }}</span>
+        </div>
+      </div>
+
+      <!-- Compressed -->
+      <div class="compare-card compressed">
+        <div class="card-label-bar">
+          <span class="card-dot compressed"></span>
+          <span class="card-label-title">Compressed</span>
+          <span class="card-label-badge">K = {{ k }}</span>
+        </div>
+        <img src="{{ compressed_image }}" alt="Compressed Image (K={{ k }})" id="compressedImg">
+        <div class="size-bar compressed-bar">
+          <span class="size-tag">{{ compressed_size }}</span>
+        </div>
+        <!-- ── Download Button ── -->
+        <div class="download-bar">
+          <a href="{{ compressed_image }}"
+             download="pixelcluster_k{{ k }}.jpg"
+             class="btn-download"
+             id="downloadBtn">
+            <svg width="15" height="15" fill="none" viewBox="0 0 24 24">
+              <path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1M12 4v12m0 0l-4-4m4 4l4-4"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Download Compressed
+          </a>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Info Strip -->
+    <div class="fade-up fade-up-4" style="
+      width:100%;max-width:900px;
+      background:rgba(139,92,246,0.07);
+      border:1px solid rgba(139,92,246,0.18);
+      border-radius:14px;
+      padding:1rem 1.5rem;
+      display:flex;
+      align-items:center;
+      gap:1rem;
+      margin-bottom:2rem;
+      font-family:'JetBrains Mono',monospace;
+      font-size:0.75rem;
+      color:var(--text-muted);
+    ">
+      <svg width="16" height="16" fill="none" viewBox="0 0 24 24" style="flex-shrink:0;">
+        <circle cx="12" cy="12" r="10" stroke="#8B5CF6" stroke-width="1.5"/>
+        <path d="M12 16v-4m0-4h.01" stroke="#8B5CF6" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+      The compressed image uses exactly <strong style="color:var(--purple);margin:0 4px;">{{ k }}</strong>
+      distinct color clusters computed via K-Means. Lower K = smaller file, higher compression. Higher K = richer color fidelity.
+    </div>
+
+    <!-- Back Link -->
+    <a href="/" class="btn-back fade-up fade-up-4">
+      <svg width="16" height="16" fill="none" viewBox="0 0 24 24">
+        <path d="M19 12H5M12 19l-7-7 7-7" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      Process Another Image
+    </a>
+
+  </div><!-- /.page-wrapper -->
+
+  <!-- ─── FOOTER ─────────────────────────────────────────── -->
+  <footer>
+    <div class="footer-grid">
+
+      <!-- Column 1: Brand -->
+      <div class="footer-brand">
+        <div class="brand" style="margin-bottom:0.9rem;">
+          <div class="brand-mark">II</div>
+          <span class="brand-name">IMAGE<span>IQ    </span></span>
+        </div>
+        <p class="footer-desc">
+          Intelligent image compression powered by K-Means clustering.
+          Reduce file sizes while preserving visual quality — no data stored, no registration required.
+        </p>
+
+        <!-- Built By Card -->
+        <div class="built-by-card">
+          <div class="avatar-wrap">
+            <img src="https://unavatar.io/twitter/Baron_dikachi"
+                 alt="Dikachi Baron"
+                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+            <span class="avatar-fallback" style="display:none;">DB</span>
+          </div>
+          <div class="built-by-info">
+            <span class="built-by-label">Built by</span>
+            <span class="built-by-name">Dikachi Baron</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Column 2: Quick Links -->
+      <div>
+        <p class="footer-col-title">Quick Links</p>
+        <ul class="footer-links">
+          <li><a href="/">Upload Image</a></li>
+          <li><a href="/#how-it-works">How It Works</a></li>
+          <li><a href="/#k-value-guide">K-Value Guide</a></li>
+          <li><a href="/#about">About</a></li>
+        </ul>
+      </div>
+
+      <!-- Column 3: Connect -->
+      <div>
+        <p class="footer-col-title">Connect</p>
+        <ul class="connect-links">
+          <li><a href="https://x.com/Baron_dikachi" target="_blank" rel="noopener noreferrer">X / Twitter</a></li>
+          <li><a href="https://www.linkedin.com/in/dikachi-baron-a4a380356?utm_source=share_via&utm_content=profile&utm_medium=member_android" target="_blank" rel="noopener noreferrer">LinkedIn</a></li>
+          <li><a href="https://www.facebook.com/share/18H6wLY1fW/" target="_blank" rel="noopener noreferrer">Facebook</a></li>
+          <li><a href="https://github.com/Dikachi32" target="_blank" rel="noopener noreferrer">GitHub</a></li>
+        </ul>
+
+        <div class="social-row">
+          <span class="social-label">Follow</span>
+          <div class="social-icons">
+
+            <!-- Twitter/X -->
+            <a href="https://x.com/Baron_dikachi" target="_blank" rel="noopener noreferrer"
+               class="social-btn twitter" title="X / Twitter">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.748l7.73-8.835L1.254 2.25H8.08l4.262 5.633L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+              </svg>
+            </a>
+
+            <!-- LinkedIn -->
+            <a href="https://www.linkedin.com/in/dikachi-baron-a4a380356?utm_source=share_via&utm_content=profile&utm_medium=member_android"
+               target="_blank" rel="noopener noreferrer"
+               class="social-btn linkedin" title="LinkedIn">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z"/>
+                <circle cx="4" cy="4" r="2"/>
+              </svg>
+            </a>
+
+            <!-- Facebook -->
+            <a href="https://www.facebook.com/share/18H6wLY1fW/"
+               target="_blank" rel="noopener noreferrer"
+               class="social-btn facebook" title="Facebook">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/>
+              </svg>
+            </a>
+
+            <!-- GitHub -->
+            <a href="https://github.com/Dikachi32"
+               target="_blank" rel="noopener noreferrer"
+               class="social-btn github" title="GitHub">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/>
+              </svg>
+            </a>
+
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /.footer-grid -->
+
+    <!-- Bottom Bar -->
+    <div class="footer-bottom">
+      <span class="footer-copy">© 2026 IMAGEIQ · Dikachi Baron · All rights reserved.</span>
+      <div class="status-chips">
+        <span class="chip"><span class="chip-dot"></span>Cluster Active</span>
+        <span class="chip">K-Means v1.0</span>
+        <span class="chip">Flask</span>
+      </div>
+    </div>
+
+  </footer>
+
+  <script>
+    document.getElementById('downloadBtn').addEventListener('click', function (e) {
+      const src = document.getElementById('compressedImg').src;
+      if (src.startsWith('data:') && typeof this.download !== 'undefined') return;
+      e.preventDefault();
+      const win = window.open();
+      win.document.write('<img src="' + src + '" style="max-width:100%">');
+      win.document.title = 'IMAGEIQ — Download compressed image';
+    });
+  </script>
+
+</body>
+</html>
